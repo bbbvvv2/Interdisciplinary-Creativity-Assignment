@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoQuest: Your Day, Your Impact</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+      background-color: #f5f8f3;
+      color: #333;
+      scroll-behavior: smooth;
+    }
+    nav {
+      background-color: #88b04b;
+      padding: 1em;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-around;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+      cursor: pointer;
+    }
+    nav a:hover {
+      color: #dbeadf;
+    }
+    header {
+      background: linear-gradient(to right, #dbeadf, #cce5c0);
+      padding: 5em 2em 2em;
+      text-align: center;
+      margin-top: 60px; /* account for fixed nav */
+    }
+    header h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.5em;
+    }
+    header p {
+      font-size: 1.2em;
+      margin-top: 0;
+    }
+    section {
+      padding: 4em 2em;
+    }
+    #game {
+      background-color: #eef3ec;
+      padding: 2em;
+    }
+    .game-box {
+      background-color: #fff;
+      border: 2px solid #88b04b;
+      border-radius: 10px;
+      padding: 2em;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+      text-align: center;
+    }
+    .game-box p, .game-box button {
+      font-size: 1.1em;
+    }
+    /* Hidden game container that will hold the interactive scenes */
+    #game-container {
+      display: none;
+      max-width: 800px;
+      margin: 2em auto;
+      background-color: #fff;
+      border: 2px solid #88b04b;
+      border-radius: 10px;
+      padding: 2em;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    }
+    .choice-btn {
+      display: block;
+      margin: 1em auto;
+      padding: 0.8em 1.5em;
+      background-color: #88b04b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .choice-btn:hover {
+      background-color: #6f953a;
+    }
+    .result-box {
+      margin-top: 1.5em;
+      padding: 1em;
+      border-left: 5px solid;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    footer {
+      background-color: #444;
+      color: white;
+      text-align: center;
+      padding: 2em 1em;
+      font-size: 0.9em;
+    }
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      60% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    .positive-animate {
+      animation: bounceIn 0.5s ease;
+    }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-10px); }
+      80% { transform: translateX(10px); }
+      100% { transform: translateX(0); }
+    }
+    .negative-animate {
+      animation: shake 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#game">Play Game</a>
+    <a href="#about">About</a>
+    <a href="#" id="checklistLink">Checklist</a>
+  </nav>
+
+  <header id="home">
+    <h1>EcoQuest: Your Day, Your Impact</h1>
+    <p>By Brock Vanek – FW 221 Interdisciplinary Creative Project</p>
+    <p><i class="fas fa-leaf"></i> Explore. Choose. Conserve. <i class="fas fa-globe"></i></p>
+  </header>
+
+  <section id="game">
+    <h2 style="text-align:center; color:#4e7342;">🎮 Play the Game</h2>
+    <!-- Welcome Game Box -->
+    <div class="game-box fade-in" id="welcomeBox">
+      <p><strong>Welcome to EcoQuest!</strong> Click below to begin your journey through daily decisions that impact the planet.</p>
+      <button class="choice-btn" onclick="startGame()">Start Game</button>
+    </div>
+    <!-- Interactive Game Container (hidden initially) -->
+    <div id="game-container"></div>
+  </section>
+
+  <section id="about">
+    <h2>🌱 About This Project</h2>
+    <p style="max-width: 800px; margin: auto; text-align: center;">
+      This project was created as part of the FW 221 Interdisciplinary Creative Assignment. Inspired by the principles of conservation biology and the powerful guest lecture by Lauren Pharr, "EcoQuest" is an interactive exploration of how our daily actions impact the environment. Through storytelling and choice, the game illustrates the real-world outcomes of our habits—and how we can be a part of the solution.
+    </p>
+  </section>
+
+  <footer>
+    <p>Made with 💚 by Brock Vanek | EcoQuest 2025</p>
+  </footer>
+
+  <script>
+    /***** Checklist Download Functionality *****/
+    document.getElementById("checklistLink").addEventListener("click", function(event) {
+      event.preventDefault();
+      if (confirm("Do you want to download the Conservation Checklist?")) {
+        window.open("EcoQuest-Checklist (3).pdf", "_blank");
+      }
+    });
+
+    /***** Helper Function to Randomize an Array *****/
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+         let j = Math.floor(Math.random() * (i + 1));
+         [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    /***** Game Variables and Scenes *****/
+    let currentSceneIndex = 0;
+    let score = 0;
+    const gameContainer = document.getElementById("game-container");
+
+    const scenes = [
+      {
+        // Introductory scene (no feedback; simply proceed)
+        text: "You wake up to a world that feels... different. The air is thick. The birdsong — quieter. The trees — still, like they’re holding their breath. Something's not right. But you feel it. A pull. A whisper from the world itself… asking you to notice. Asking you to act. Today, your choices will shape what tomorrow looks like.",
+        choices: [
+          {
+            text: "Start Your Day",
+            nextScene: 1
+          }
+        ]
+      },
+      {
+        text: "Packing Lunch – 'Plastic or Planet?'. What will you use to pack your lunch today?",
+        choices: [
+          {
+            text: "Use plastic wrap and disposable utensils",
+            feedback: "You packed convenience — and plastic. Over 8 million tons of plastic waste end up in our oceans annually, endangering over 700 marine species.",
+            impact: -1,
+            nextScene: 2
+          },
+          {
+            text: "Use reusable containers and utensils",
+            feedback: "Sustainable packing, one lunch at a time. Reusables can cut your plastic waste by over 80%, keeping oceans safer.",
+            impact: 1,
+            nextScene: 2
+          }
+        ]
+      },
+      {
+        text: "Commuting Choices – 'The Way You Move'. How will you get to work today?",
+        choices: [
+          {
+            text: "Drive alone to work",
+            feedback: "Driving solo is a major contributor to climate change. Transportation accounts for nearly 30% of greenhouse gas emissions.",
+            impact: -1,
+            nextScene: 3
+          },
+          {
+            text: "Bike or take public transportation",
+            feedback: "Smart choice! You cut your carbon footprint by up to 67% per mile and help improve local air quality.",
+            impact: 1,
+            nextScene: 3
+          }
+        ]
+      },
+      {
+        text: "Office Energy Use – 'Power Wisely'. You're stepping out for a break. What will you do with your workstation?",
+        choices: [
+          {
+            text: "Leave everything on",
+            feedback: "Even idle devices use power. 'Phantom energy' accounts for up to 10% of household electricity waste.",
+            impact: -1,
+            nextScene: 4
+          },
+          {
+            text: "Turn off lights and unplug electronics",
+            feedback: "Good move! Turning off electronics during breaks can save enough energy to power a laptop for a week.",
+            impact: 1,
+            nextScene: 4
+          }
+        ]
+      },
+      {
+        text: "Water Usage – 'Every Drop Counts'. The dishwasher isn't full yet. What do you do?",
+        choices: [
+          {
+            text: "Run it anyway",
+            feedback: "Running half loads wastes over 1,000 gallons of water yearly — enough for five years of drinking water.",
+            impact: -1,
+            nextScene: 5
+          },
+          {
+            text: "Wait until it's full",
+            feedback: "Smart water use! Full loads can save 320 gallons a month and lower your water bill.",
+            impact: 1,
+            nextScene: 5
+          }
+        ]
+      },
+      {
+        text: "Shopping Decisions – 'Bagged or Better?'. You're stocking up at the store. Which products do you choose?",
+        choices: [
+          {
+            text: "Plastic-heavy packaging",
+            feedback: "Over 14 million tons of plastic enter oceans each year. Many marine animals mistake it for food.",
+            impact: -1,
+            nextScene: 6
+          },
+          {
+            text: "Low-waste or recyclable packaging",
+            feedback: "Great pick! You could cut your plastic footprint by 60% with compostables and bulk buys.",
+            impact: 1,
+            nextScene: 6
+          }
+        ]
+      },
+      {
+        text: "Waste Management – 'Know Where It Goes'. Three items: a banana peel, a soda can, and a plastic bag. What do you do?",
+        choices: [
+          {
+            text: "Throw everything in the trash",
+            feedback: "Incorrect sorting means recyclables end up in landfills. 60% of waste could be diverted with better habits.",
+            impact: -1,
+            nextScene: 7
+          },
+          {
+            text: "Sort correctly: compost, recycle, and trash",
+            feedback: "Well done! Proper sorting can reduce landfill waste by 75% and save massive energy resources.",
+            impact: 1,
+            nextScene: 7
+          }
+        ]
+      },
+      {
+        // Updated Scene 7 (Food Sourcing)
+        text: "Food Sourcing – 'From Farm to Table'. How do you source your food today?",
+        choices: [
+          {
+            text: "Buy imported, heavily packaged groceries",
+            feedback: "Imported and over-packaged items increase your carbon footprint and contribute to excessive waste.",
+            impact: -1,
+            nextScene: 8
+          },
+          {
+            text: "Buy fresh, local produce from farmers’ markets",
+            feedback: "Great choice! Local produce supports sustainable agriculture and reduces transportation emissions.",
+            impact: 1,
+            nextScene: 8
+          }
+        ]
+      },
+      {
+        // Updated Scene 8 (Volunteer Opportunities)
+        text: "Volunteer Opportunities – 'Your Time, Your Impact'. Today, you have a choice: sign up for a community sustainability event or attend a high-carbon social gathering. What do you do?",
+        choices: [
+          {
+            text: "Attend a high-carbon social party",
+            feedback: "Skipping community engagement means missing out on sustainable actions. Social events like these can have a high environmental cost.",
+            impact: -1,
+            nextScene: 9
+          },
+          {
+            text: "Volunteer at a local community sustainability event",
+            feedback: "Fantastic! Volunteering helps build a greener future and benefits your community directly.",
+            impact: 1,
+            nextScene: 9
+          }
+        ]
+      },
+      {
+        // Final Scene with updated button text.
+        text: "Your Ripple Effect. The sun is setting. Your day is done — but your impact lingers. What kind of world did you help create?",
+        choices: [
+          {
+            text: "See My Results!",
+            feedback: "Each decision — small or bold — shapes our future. Keep noticing. Keep acting."
+          }
+        ]
+      }
+    ];
+
+    /***** Render Current Scene *****/
+    function renderScene() {
+      gameContainer.innerHTML = "";
+      gameContainer.classList.add("fade-in");
+      
+      const scene = scenes[currentSceneIndex];
+      const sceneText = document.createElement("p");
+      sceneText.innerText = scene.text;
+      sceneText.classList.add("fade-in");
+      gameContainer.appendChild(sceneText);
+
+      // For the intro scene (scene 0) with a single fixed option, only display a Next button.
+      if (currentSceneIndex === 0 && scene.choices.length === 1) {
+        const nextBtn = document.createElement("button");
+        nextBtn.innerText = "Next";
+        nextBtn.className = "choice-btn";
+        nextBtn.addEventListener("click", () => {
+          currentSceneIndex = scene.choices[0].nextScene;
+          renderScene();
+        });
+        gameContainer.appendChild(nextBtn);
+        return;
+      }
+
+      // Randomize choice order if more than one option is available.
+      if (scene.choices.length > 1) {
+        shuffleArray(scene.choices);
+      }
+
+      // Create a button for each choice.
+      scene.choices.forEach(choice => {
+        const button = document.createElement("button");
+        button.innerText = choice.text;
+        button.className = "choice-btn";
+        button.addEventListener("click", () => {
+          // Disable all current buttons.
+          const allButtons = gameContainer.querySelectorAll(".choice-btn");
+          allButtons.forEach(btn => btn.disabled = true);
+
+          // Display feedback if provided.
+          if (typeof choice.feedback !== "undefined") {
+            const feedbackBox = document.createElement("div");
+            feedbackBox.className = "result-box fade-in";
+
+            if (typeof choice.impact !== "undefined" && choice.impact < 0) {
+              feedbackBox.style.backgroundColor = "#f8d7da";
+              feedbackBox.style.borderLeftColor = "#dc3545";
+              feedbackBox.innerText = "Play your Part! " + choice.feedback;
+              feedbackBox.classList.add("negative-animate");
+              const negativeImage = document.createElement("img");
+              negativeImage.src = "negative.png";
+              negativeImage.alt = "Negative Choice";
+              negativeImage.style.display = "block";
+              negativeImage.style.margin = "10px auto";
+              negativeImage.style.maxWidth = "100px";
+              feedbackBox.appendChild(negativeImage);
+            } else if (typeof choice.impact !== "undefined" && choice.impact > 0) {
+              feedbackBox.style.backgroundColor = "#d4edda";
+              feedbackBox.style.borderLeftColor = "#28a745";
+              feedbackBox.innerText = "Great Job! " + choice.feedback;
+              feedbackBox.classList.add("positive-animate");
+              const positiveImage = document.createElement("img");
+              positiveImage.src = "positive.png";
+              positiveImage.alt = "Positive Choice";
+              positiveImage.style.display = "block";
+              positiveImage.style.margin = "10px auto";
+              positiveImage.style.maxWidth = "100px";
+              feedbackBox.appendChild(positiveImage);
+            } else {
+              feedbackBox.innerText = choice.feedback;
+            }
+            gameContainer.appendChild(feedbackBox);
+          }
+
+          // Update score if an impact is defined.
+          if (typeof choice.impact !== "undefined") {
+            score += choice.impact;
+          }
+
+          // Show a Next button if nextScene is defined.
+          if (typeof choice.nextScene !== "undefined") {
+            const nextBtn = document.createElement("button");
+            nextBtn.innerText = "Next";
+            nextBtn.className = "choice-btn";
+            nextBtn.addEventListener("click", () => {
+              currentSceneIndex = choice.nextScene;
+              renderScene();
+            });
+            gameContainer.appendChild(nextBtn);
+          } else {
+            // End of game.
+            const endBtn = document.createElement("button");
+            endBtn.innerText = "See Your Impact";
+            endBtn.className = "choice-btn";
+            endBtn.addEventListener("click", endGame);
+            gameContainer.appendChild(endBtn);
+          }
+        });
+        gameContainer.appendChild(button);
+      });
+    }
+
+    /***** Start Game Function *****/
+    function startGame() {
+      document.getElementById("welcomeBox").style.display = "none";
+      gameContainer.style.display = "block";
+      currentSceneIndex = 0;
+      score = 0;
+      renderScene();
+    }
+
+    /***** End Game Function *****/
+    function endGame() {
+      gameContainer.innerHTML = "";
+      const maxScore = 8;
+      let finalMessage = "You scored " + score + "/" + maxScore + ". ";
+      if (score === maxScore) {
+        finalMessage += "Excellent! Your actions are perfect. Thank you for playing your part in conservation. Check out our Checklist on the toolbar above and keep exploring ways to create even more impact!";
+      } else {
+        finalMessage += "There's room for improvement. Please check out our Checklist on the toolbar above, reflect on your choices, and try again to make a bigger impact.";
+      }
+      const endText = document.createElement("p");
+      endText.innerText = finalMessage;
+      gameContainer.appendChild(endText);
+
+      const restartBtn = document.createElement("button");
+      restartBtn.innerText = "Restart Game";
+      restartBtn.className = "choice-btn";
+      restartBtn.addEventListener("click", () => {
+        document.getElementById("welcomeBox").style.display = "block";
+        gameContainer.style.display = "none";
+      });
+      gameContainer.appendChild(restartBtn);
+    }
+  </script>
+</body>
+</html>
